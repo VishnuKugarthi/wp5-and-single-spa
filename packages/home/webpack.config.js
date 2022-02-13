@@ -10,15 +10,15 @@ module.exports = {
   devtool: 'source-map',
 
   optimization: {
-    minimize: false
+    minimize: false,
   },
 
   output: {
-    publicPath: 'http://localhost:3001/'
+    publicPath: 'http://localhost:3001/',
   },
 
   resolve: {
-    extensions: ['.jsx', '.js', '.json']
+    extensions: ['.jsx', '.js', '.json'],
   },
 
   module: {
@@ -27,36 +27,37 @@ module.exports = {
         test: /\.jsx?$/,
         loader: require.resolve('babel-loader'),
         options: {
-          presets: [require.resolve('@babel/preset-react')]
-        }
+          presets: [require.resolve('@babel/preset-react')],
+        },
       },
       {
         test: /\.md$/,
-        loader: 'raw-loader'
-      }
-    ]
+        loader: 'raw-loader',
+      },
+    ],
   },
 
   plugins: [
-    new CopyPlugin([
-      { from: 'fruit', to: 'fruit' },
-    ]),
+    new CopyPlugin({
+      patterns: [{ from: 'fruit', to: 'fruit' }],
+    }),
     new ModuleFederationPlugin({
       name: 'home',
       library: { type: 'var', name: 'home' },
       filename: 'remoteEntry.js',
       remotes: {
-        nav: 'nav',
-        productImage: 'productImage',
-        buyTools: 'buyTools'
+        // uiShellApp: `icfsuishell@${process.env.UI_SHELL_APP_URL}/remoteEntry.js`,
+        nav: `nav@http://localhost:3003/remoteEntry.js`,
+        productImage: `productImage@http://localhost:3002/remoteEntry.js`,
+        buyTools: `buyTools@http://localhost:3004/remoteEntry.js`,
       },
       exposes: {
-        fruit: './src/fruit'
+        fruit: './src/fruit',
       },
-      shared: []
+      shared: [],
     }),
     new HtmlWebpackPlugin({
-      template: './public/index.html'
+      template: './public/index.html',
     }),
-  ]
+  ],
 };
